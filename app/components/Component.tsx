@@ -44,7 +44,6 @@ const categories: Category[] = [
 
 export default function Component() {
   const [selectedCategory, setSelectedCategory] = useState<string>('trousers')
-  const [selectedItem, setSelectedItem] = useState<Item | null>(null)
   const [cart, setCart] = useState<CartItem[]>([])
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false)
@@ -121,7 +120,6 @@ export default function Component() {
                     className="w-full text-left p-2 bg-[#c0c0c0] text-black border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
                     onClick={() => {
                       setSelectedCategory(category.id)
-                      setSelectedItem(null)
                       toggleMenu()
                     }}
                   >
