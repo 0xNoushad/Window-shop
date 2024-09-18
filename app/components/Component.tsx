@@ -1,16 +1,15 @@
 "use client";
+
 import { useState } from 'react';
 import Image from 'next/image';
 
+// Define TypeScript interfaces for items and categories
 interface Item {
   id: number;
   image: string;
   color: string;
   price: number;
-}
-
-interface CartItem extends Item {
-  cartId: number;
+  sizes: string[];
 }
 
 interface Category {
@@ -19,66 +18,76 @@ interface Category {
   items: Item[];
 }
 
+// Sample data using TypeScript interfaces
 const categories: Category[] = [
   { id: 'hoodies', name: 'Hoodies', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'Black', price: 49.99 },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Gray', price: 54.99 },
+    { id: 1, image: '/assets/images/1.jpg', color: 'Black', price: 49.99, sizes: ['S', 'M', 'L', 'XL'] },
+    { id: 2, image: '/assets/images/1.jpg', color: 'Gray', price: 54.99, sizes: ['S', 'M', 'L'] },
   ]},
-  { id: 'tee', name: 'Tee`', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'White', price: 29.99 },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Blue', price: 34.99 },
+  { id: 'tee', name: 'Tee', items: [
+    { id: 1, image: '/assets/images/1.jpg', color: 'White', price: 29.99, sizes: ['S', 'M', 'L'] },
+    { id: 2, image: '/assets/images/1.jpg', color: 'Blue', price: 34.99, sizes: ['M', 'L', 'XL'] },
   ]},
   { id: 'trousers', name: 'Trousers', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'Gray', price: 59.99 },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Green and Yellow', price: 64.99 },
-    { id: 3, image: '/assets/images/1.jpg', color: 'Pattern Gray', price: 69.99 },
-    { id: 4, image: '/assets/images/1.jpg', color: 'Cream and Blue', price: 74.99 },
-    { id: 5, image: '/assets/images/1.jpg', color: 'Black', price: 59.99 },
-    { id: 6, image: '/assets/images/1.jpg', color: 'Gray and White', price: 64.99 },
+    { id: 1, image: '/assets/images/1.jpg', color: 'Gray', price: 59.99, sizes: ['M', 'L', 'XL'] },
+    { id: 2, image: '/assets/images/1.jpg', color: 'Green and Yellow', price: 64.99, sizes: ['L', 'XL'] },
   ]},
   { id: 't-shirts', name: 'T-Shirts', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'Red', price: 24.99 },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Green', price: 24.99 },
+    { id: 1, image: '/assets/images/1.jpg', color: 'Red', price: 24.99, sizes: ['S', 'M', 'L'] },
+    { id: 2, image: '/assets/images/1.jpg', color: 'Green', price: 24.99, sizes: ['S', 'M'] },
   ]},
 ];
 
+interface CartItem extends Item {
+  cartId: number;
+  size: string;
+}
+
 export default function Component() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('trousers')
-  const [cart, setCart] = useState<CartItem[]>([])
-  const [isCartOpen, setIsCartOpen] = useState<boolean>(false)
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false)
-  const [orderPlaced, setOrderPlaced] = useState<boolean>(false)
-  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
+  const [selectedCategory, setSelectedCategory] = useState<string>('trousers');
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState<boolean>(false);
+  const [orderPlaced, setOrderPlaced] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [selectedSize, setSelectedSize] = useState<string>('');
 
   const addToCart = (item: Item) => {
-    setCart([...cart, { ...item, cartId: Date.now() }])
-  }
+    if (!selectedSize) {
+      alert('Please select a size.');
+      return;
+    }
+    setCart([...cart, { ...item, cartId: Date.now(), size: selectedSize }]);
+    setSelectedSize('');
+    setSelectedItem(null);
+  };
 
   const removeFromCart = (cartId: number) => {
-    setCart(cart.filter(item => item.cartId !== cartId))
-  }
+    setCart(cart.filter(item => item.cartId !== cartId));
+  };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0).toFixed(2)
-  }
+    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+  };
 
   const handleCheckout = () => {
-    setIsCheckoutOpen(true)
-  }
+    setIsCheckoutOpen(true);
+  };
 
   const placeOrder = () => {
-    setOrderPlaced(true)
-    setCart([])
+    setOrderPlaced(true);
+    setCart([]);
     setTimeout(() => {
-      setOrderPlaced(false)
-      setIsCheckoutOpen(false)
-      setIsCartOpen(false)
-    }, 3000)
-  }
+      setOrderPlaced(false);
+      setIsCheckoutOpen(false);
+      setIsCartOpen(false);
+    }, 3000);
+  };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <div className="min-h-screen bg-[#000080] text-white p-4 relative font-mono">
@@ -91,10 +100,12 @@ export default function Component() {
           font-family: 'MS Sans Serif', 'Courier New', monospace;
         }
       `}</style>
-      
+
       {/* Header */}
       <header className="flex justify-between items-center mb-8 bg-[#000080] p-2 border-b-2 border-white">
-        <div className="text-2xl font-bold">{categories.find(c => c.id === selectedCategory)?.name || 'Clothing Store'}</div>
+        <div className="text-2xl font-bold">
+          {categories.find(c => c.id === selectedCategory)?.name || 'Clothing Store'}
+        </div>
         <div className="flex space-x-4 items-center">
           <button 
             className="p-2 bg-[#c0c0c0] text-black border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow relative"
@@ -119,8 +130,9 @@ export default function Component() {
                   <button 
                     className="w-full text-left p-2 bg-[#c0c0c0] text-black border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
                     onClick={() => {
-                      setSelectedCategory(category.id)
-                      toggleMenu()
+                      setSelectedCategory(category.id);
+                      setSelectedItem(null);
+                      toggleMenu();
                     }}
                   >
                     {category.name}
@@ -149,7 +161,7 @@ export default function Component() {
                     <li key={item.cartId} className="flex items-center justify-between mb-2 bg-[#c0c0c0] text-black p-2 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800">
                       <div className="flex items-center">
                         <Image src={item.image} alt={`${item.color} ${categories.find(c => c.items.some(i => i.id === item.id))?.name}`} width={50} height={50} className="mr-2" />
-                        <span>{item.color} - ${item.price}</span>
+                        <span>{item.color} - ${item.price} - Size: {item.size}</span>
                       </div>
                       <button onClick={() => removeFromCart(item.cartId)} className="bg-[#c0c0c0] text-black px-2 py-1 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow">Remove</button>
                     </li>
@@ -183,7 +195,7 @@ export default function Component() {
                 <ul className="mb-4">
                   {cart.map((item) => (
                     <li key={item.cartId} className="flex items-center justify-between mb-2">
-                      <span>{item.color} - ${item.price}</span>
+                      <span>{item.color} - ${item.price} - Size: {item.size}</span>
                     </li>
                   ))}
                 </ul>
@@ -203,6 +215,34 @@ export default function Component() {
         </div>
       )}
 
+      {/* Item Selection Modal */}
+      {selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+          <div className="bg-[#000080] w-full max-w-md p-4 border-2 border-white">
+            <button onClick={() => setSelectedItem(null)} className="absolute top-4 right-4 text-4xl bg-[#c0c0c0] text-black px-4 py-2 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow">&times;</button>
+            <Image src={selectedItem.image} alt={`${selectedItem.color} ${selectedCategory}`} width={150} height={150} className="mb-4" />
+            <h3 className="text-xl font-bold">{selectedItem.color}</h3>
+            <p className="mb-4">${selectedItem.price.toFixed(2)}</p>
+            <select 
+              className="w-full p-2 mb-4 bg-[#c0c0c0] text-black border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow"
+              value={selectedSize}
+              onChange={(e) => setSelectedSize(e.target.value)}
+            >
+              <option value="">Select size</option>
+              {selectedItem.sizes.map(size => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+            <button 
+              onClick={() => addToCart(selectedItem)} 
+              className="w-full bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <main>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -212,15 +252,15 @@ export default function Component() {
               <h3 className="text-xl font-bold">{item.color}</h3>
               <p className="mb-4">${item.price.toFixed(2)}</p>
               <button 
-                onClick={() => addToCart(item)} 
+                onClick={() => setSelectedItem(item)} 
                 className="w-full bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
               >
-                Add to Cart
+                Select Size
               </button>
             </div>
           ))}
         </div>
       </main>
     </div>
-  )
+  );
 }
