@@ -1,4 +1,4 @@
-"use client";  
+"use client";
 import { useState } from 'react';
 import Image from 'next/image';
 
@@ -7,7 +7,7 @@ const categories = [
     { id: 1, image: '/assets/images/1.jpg', color: 'Black', price: 49.99 },
     { id: 2, image: '/assets/images/1.jpg', color: 'Gray', price: 54.99 },
   ]},
-  { id: 'tee', name: 'Tee`', items: [
+  { id: 'tee', name: 'Tee', items: [
     { id: 1, image: '/assets/images/1.jpg', color: 'White', price: 29.99 },
     { id: 2, image: '/assets/images/1.jpg', color: 'Blue', price: 34.99 },
   ]},
@@ -25,44 +25,52 @@ const categories = [
   ]},
 ];
 
+interface CartItem {
+  id: number;
+  image: string;
+  color: string;
+  price: number;
+  cartId: number;
+}
+
 export default function Component() {
-  const [selectedCategory, setSelectedCategory] = useState('trousers')
-  const [selectedItem, setSelectedItem] = useState(null)
-  const [cart, setCart] = useState([])
-  const [isCartOpen, setIsCartOpen] = useState(false)
-  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
-  const [orderPlaced, setOrderPlaced] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('trousers');
+  const [selectedItem, setSelectedItem] = useState<{ id: number; image: string; color: string; price: number } | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const addToCart = (item: { id: number; image: string; color: string; price: number; }) => {
-    setCart([...cart, { ...item, cartId: Date.now() }])
-  }
+  const addToCart = (item: { id: number; image: string; color: string; price: number }) => {
+    setCart([...cart, { ...item, cartId: Date.now() }]);
+  };
 
-  const removeFromCart = (cartId) => {
-    setCart(cart.filter(item => item.cartId !== cartId))
-  }
+  const removeFromCart = (cartId: number) => {
+    setCart(cart.filter(item => item.cartId !== cartId));
+  };
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0).toFixed(2)
-  }
+    return cart.reduce((total, item) => total + item.price, 0).toFixed(2);
+  };
 
   const handleCheckout = () => {
-    setIsCheckoutOpen(true)
-  }
+    setIsCheckoutOpen(true);
+  };
 
   const placeOrder = () => {
-    setOrderPlaced(true)
-    setCart([])
+    setOrderPlaced(true);
+    setCart([]);
     setTimeout(() => {
-      setOrderPlaced(false)
-      setIsCheckoutOpen(false)
-      setIsCartOpen(false)
-    }, 3000)
-  }
+      setOrderPlaced(false);
+      setIsCheckoutOpen(false);
+      setIsCartOpen(false);
+    }, 3000);
+  };
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
     <div className="min-h-screen bg-[#000080] text-white p-4 relative font-mono">
@@ -103,9 +111,9 @@ export default function Component() {
                   <button 
                     className="w-full text-left p-2 bg-[#c0c0c0] text-black border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
                     onClick={() => {
-                      setSelectedCategory(category.id)
-                      setSelectedItem(null)
-                      toggleMenu()
+                      setSelectedCategory(category.id);
+                      setSelectedItem(null);
+                      toggleMenu();
                     }}
                   >
                     {category.name}
@@ -161,51 +169,83 @@ export default function Component() {
         <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
           <div className="bg-[#000080] w-full max-w-md p-4 border-2 border-white">
             <h2 className="text-2xl font-bold mb-4">Checkout</h2>
-            {orderPlaced ? (
-              <p className="text-lg">Thank you! Your order has been placed.</p>
-            ) : (
-              <>
-                <ul className="mb-4">
-                  {cart.map((item) => (
-                    <li key={item.cartId} className="flex items-center justify-between mb-2">
-                      <span>{item.color} - ${item.price}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="font-bold">Total:</span>
-                  <span>${getTotalPrice()}</span>
-                </div>
-                <button 
-                  onClick={placeOrder} 
-                  className="w-full bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
-                >
-                  Place Order
-                </button>
-              </>
-            )}
+            <p className="mb-4">Total: ${getTotalPrice()}</p>
+            <button 
+              onClick={placeOrder} 
+              className="bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
+            >
+              Place Order
+            </button>
+            <button 
+              onClick={() => setIsCheckoutOpen(false)} 
+              className="bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300 mt-4"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
 
       {/* Main Content */}
-      <main>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <main className="flex">
+        <aside className="w-64">
+          <ul className="space-y-2">
+            {categories.map(category => (
+              <li key={category.id}>
+                <button 
+                  className={`w-full text-left p-2 ${selectedCategory === category.id ? 'bg-[#c0c0c0]' : 'bg-[#000080]'} text-white border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300`}
+                  onClick={() => {
+                    setSelectedCategory(category.id);
+                    setSelectedItem(null);
+                  }}
+                >
+                  {category.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
+        <section className="flex-1 pl-4">
           {categories.find(c => c.id === selectedCategory)?.items.map(item => (
-            <div key={item.id} className="bg-[#c0c0c0] text-black p-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow">
-              <Image src={item.image} alt={`${item.color} ${selectedCategory}`} width={150} height={150} className="mb-4" />
+            <div key={item.id} className="border p-4 mb-4 bg-[#000080] text-white">
+              <Image src={item.image} alt={item.color} width={200} height={200} />
               <h3 className="text-xl font-bold">{item.color}</h3>
-              <p className="mb-4">${item.price.toFixed(2)}</p>
+              <p>${item.price}</p>
               <button 
-                onClick={() => addToCart(item)} 
-                className="w-full bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
+                className="mt-2 bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
+                onClick={() => setSelectedItem(item)}
               >
-                Add to Cart
+                View Details
               </button>
             </div>
           ))}
-        </div>
+        </section>
       </main>
+
+      {/* Item Details Modal */}
+      {selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
+          <div className="bg-[#000080] w-full max-w-md p-4 border-2 border-white">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-bold">{selectedItem.color}</h2>
+              <button 
+                onClick={() => setSelectedItem(null)} 
+                className="text-2xl bg-[#c0c0c0] text-black px-4 py-2 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow"
+              >
+                &times;
+              </button>
+            </div>
+            <Image src={selectedItem.image} alt={selectedItem.color} width={200} height={200} />
+            <p className="mt-2">${selectedItem.price}</p>
+            <button 
+              onClick={() => addToCart(selectedItem)} 
+              className="mt-4 bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  )
+  );
 }
