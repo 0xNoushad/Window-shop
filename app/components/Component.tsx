@@ -7,7 +7,7 @@ const categories = [
     { id: 1, image: '/assets/images/1.jpg', color: 'Black', price: 49.99 },
     { id: 2, image: '/assets/images/1.jpg', color: 'Gray', price: 54.99 },
   ]},
-  { id: 'nf-tees', name: 'NF Tees', items: [
+  { id: 'tee', name: 'Tee', items: [
     { id: 1, image: '/assets/images/1.jpg', color: 'White', price: 29.99 },
     { id: 2, image: '/assets/images/1.jpg', color: 'Blue', price: 34.99 },
   ]},
