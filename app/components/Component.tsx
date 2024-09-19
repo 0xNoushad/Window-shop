@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 
-// Define TypeScript interfaces for items and categories
 interface Item {
   id: number;
   image: string;
@@ -18,23 +17,21 @@ interface Category {
   items: Item[];
 }
 
-// Sample data using TypeScript interfaces
 const categories: Category[] = [
   { id: 'hoodies', name: 'Hoodies', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'Black', price: 49.99, sizes: ['S', 'M', 'L', 'XL'] },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Gray', price: 54.99, sizes: ['S', 'M', 'L'] },
+    { id: 1, image: 'https://i.pinimg.com/736x/1c/ed/7f/1ced7f3d930b825af563054c2a456c46.jpg', color: 'Black', price: 99.99, sizes: ['S', 'M', 'L', 'XL'] },
+    { id: 2, image: 'https://i.pinimg.com/474x/47/70/37/4770376c01e4ff7ace28bf0f8eda0bf2.jpg', color: 'Green', price: 99.99, sizes: ['S', 'M', 'L'] },
   ]},
-  { id: 'tee', name: 'Tee', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'White', price: 29.99, sizes: ['S', 'M', 'L'] },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Blue', price: 34.99, sizes: ['M', 'L', 'XL'] },
+  { id: 'jacket', name: 'Jacket', items: [
+    { id: 1, image: 'https://i.pinimg.com/564x/dc/91/5e/dc915ec8076532e666348d2cdaf57858.jpg', color: 'Embroidery', price: 99.99, sizes: ['S', 'M', 'L'] },
+    { id: 2, image: 'https://i.pinimg.com/736x/c2/85/49/c28549be845ccb55e462e3a5a9761fc9.jpg', color: 'Vintage', price: 99.99, sizes: ['M', 'L', 'XL'] },
   ]},
   { id: 'trousers', name: 'Trousers', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'Gray', price: 59.99, sizes: ['M', 'L', 'XL'] },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Green and Yellow', price: 64.99, sizes: ['L', 'XL'] },
+    { id: 1, image: 'https://i.pinimg.com/736x/7a/13/b0/7a13b009599c97d769f341ec9ff7c078.jpg', color: 'Black', price: 99.99, sizes: ['M', 'L', 'XL'] },
+    { id: 2, image: 'https://i.pinimg.com/736x/0c/4e/f2/0c4ef27429dc4332a4a2364ee8257c2b.jpg', color: 'Khaki', price: 99.99, sizes: ['L', 'XL'] },
   ]},
   { id: 't-shirts', name: 'T-Shirts', items: [
-    { id: 1, image: '/assets/images/1.jpg', color: 'Red', price: 24.99, sizes: ['S', 'M', 'L'] },
-    { id: 2, image: '/assets/images/1.jpg', color: 'Green', price: 24.99, sizes: ['S', 'M'] },
+    { id: 1, image: 'https://i.pinimg.com/564x/e6/67/22/e66722335a6ab4faa9f090474eec9c43.jpg', color: 'Washed', price: 99.99, sizes: ['S', 'M', 'L'] },
   ]},
 ];
 
@@ -158,9 +155,9 @@ export default function Component() {
               <>
                 <ul className="mb-4">
                   {cart.map((item) => (
-                    <li key={item.cartId} className="flex items-center justify-between mb-2 bg-[#c0c0c0] text-black p-2 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800">
+                    <li key={item.cartId} className="flex items-center justify-between mb-2 bg-[#c0c0c0] text-black p-2 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow">
                       <div className="flex items-center">
-                        <Image src={item.image} alt={`${item.color} ${categories.find(c => c.items.some(i => i.id === item.id))?.name}`} width={50} height={50} className="mr-2" />
+                        <Image src={item.image} alt={`${item.color} ${categories.find(c => c.items.some(i => i.id === item.id))?.name}`} width={80} height={80} className="mr-2 object-cover" />
                         <span>{item.color} - ${item.price} - Size: {item.size}</span>
                       </div>
                       <button onClick={() => removeFromCart(item.cartId)} className="bg-[#c0c0c0] text-black px-2 py-1 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow">Remove</button>
@@ -215,12 +212,12 @@ export default function Component() {
         </div>
       )}
 
-      {/* Item Selection Modal */}
-      {selectedItem && (
+{/* Item Selection Modal */}
+{selectedItem && (
         <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center">
           <div className="bg-[#000080] w-full max-w-md p-4 border-2 border-white">
             <button onClick={() => setSelectedItem(null)} className="absolute top-4 right-4 text-4xl bg-[#c0c0c0] text-black px-4 py-2 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow">&times;</button>
-            <Image src={selectedItem.image} alt={`${selectedItem.color} ${selectedCategory}`} width={150} height={150} className="mb-4" />
+            <Image src={selectedItem.image} alt={`${selectedItem.color} ${selectedCategory}`} width={200} height={200} className="mb-4" />
             <h3 className="text-xl font-bold">{selectedItem.color}</h3>
             <p className="mb-4">${selectedItem.price.toFixed(2)}</p>
             <select 
@@ -243,24 +240,35 @@ export default function Component() {
         </div>
       )}
 
-      {/* Main Content */}
-      <main>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {categories.find(c => c.id === selectedCategory)?.items.map(item => (
-            <div key={item.id} className="bg-[#c0c0c0] text-black p-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow">
-              <Image src={item.image} alt={`${item.color} ${selectedCategory}`} width={150} height={150} className="mb-4" />
-              <h3 className="text-xl font-bold">{item.color}</h3>
-              <p className="mb-4">${item.price.toFixed(2)}</p>
-              <button 
-                onClick={() => setSelectedItem(item)} 
-                className="w-full bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
-              >
-                Select Size
-              </button>
-            </div>
-          ))}
+
+    {/* Main Content */}
+<main>
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    {categories.find(c => c.id === selectedCategory)?.items.map(item => (
+      <div key={item.id} className="bg-[#c0c0c0] text-black p-2 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow flex flex-col items-center">
+        <div className="flex-grow flex items-center justify-center mb-4">
+          <Image 
+            src={item.image} 
+            alt={`${item.color} ${categories.find(c => c.id === selectedCategory)?.name}`} 
+            layout="intrinsic" 
+            width={300} 
+            height={300} 
+            className="object-cover"
+          />
         </div>
-      </main>
+        <h3 className="text-xl font-bold mb-2">{item.color}</h3>
+        <p className="mb-4">${item.price.toFixed(2)}</p>
+        <button 
+          onClick={() => setSelectedItem(item)} 
+          className="w-full bg-[#c0c0c0] text-black py-2 px-4 border-2 border-t-white border-l-white border-b-gray-800 border-r-gray-800 shadow hover:bg-gray-300"
+        >
+          Select Size
+        </button>
+      </div>
+    ))}
+  </div>
+</main>
+
     </div>
   );
 }
